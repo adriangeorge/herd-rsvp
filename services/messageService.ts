@@ -58,7 +58,6 @@ export class MessageService {
 
       try {
         const res = await axios.request(config);
-        console.log(JSON.stringify(res.data));
       } catch (error) {
         console.log(error);
       }
@@ -91,7 +90,6 @@ export class MessageService {
 
     try {
       const res = await axios.request(config);
-      console.log(JSON.stringify(res.data));
     } catch (error) {
       console.log(error);
     }
@@ -110,11 +108,11 @@ export class MessageService {
         office += `${rows[i].name} vine la birou la ${rows[i].arrivesat}\n`;
       }
     }
-    rows.forEach(async (capybara) => {
+    for (let i = 0; i < rows.length; i++) {
       let data = JSON.stringify({
         messaging_product: "whatsapp",
         recipient_type: "individual",
-        to: capybara.nrtel,
+        to: rows[i].nrtel,
         type: "text",
         text: {
           preview_url: false,
@@ -125,21 +123,19 @@ export class MessageService {
       let config = {
         method: "post",
         maxBodyLength: Infinity,
-        url: "https://graph.facebook.com/v18.0/225503143983395/messages",
+        url: `https://graph.facebook.com/v18.0/${process.env.SENDER_PHONE_ID}/messages`,
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer EAANoiYFLozwBO4jSFeoPYmkFIFh4ZB40CBZBX4w56R7ha4NFEjKiJ2ZAXQsZBC9coGkdUw1QEhNh232a4e9HYagNvWPLqm2t6GKLbBIPVLvGrVFmTrlomfDRFiIZAIfc5CgPZBb0YfcDFiMIUwj7RQj2koRQnu9gnXW26BZBR8vJCRIOHMrVWBliJzyS9FJ0pZAGNAXlpugi3E2ikyAugyphKs2dcCRkv5mnXVKvIgZDZD",
+          Authorization: `Bearer ${process.env.BUSINESS_ACCT_TOKEN}`,
         },
         data: data,
       };
 
       try {
         const res = await axios.request(config);
-        console.log(JSON.stringify(res.data));
       } catch (error) {
         console.log(error);
       }
-    });
+    }
   }
 }
