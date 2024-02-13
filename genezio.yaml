@@ -1,0 +1,8 @@
+name: herd-rsvp
+region: us-east-1
+cloudProvider: genezio
+scripts:
+  preBackendDeploy: go mod download
+classes:
+  - path: ./backendService/backendService.go
+    type: jsonrpc
