@@ -47,14 +47,14 @@ export class CapybaraDBService {
     return JSON.stringify(result.rows);
   }
 
-  async setCapybaraArrival(name: string, arrivesAt: string): Promise<string> {
+  async setCapybaraArrival(phone: string, arrivesAt: string): Promise<string> {
     await this.pool.query(
       "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt VARCHAR(255));"
     );
 
     await this.pool.query(
-      "UPDATE capybaras SET arrivesAt = $1 WHERE name = $2",
-      [arrivesAt, name]
+      "UPDATE capybaras SET arrivesAt = $1 WHERE nrtel = $2",
+      [arrivesAt, phone]
     );
     const result = await this.pool.query("select * from capybaras");
 
