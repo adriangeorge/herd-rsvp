@@ -103,12 +103,22 @@ export class MessageService {
     console.log(JSON.stringify(rows));
     for (let i = 0; i < rows.length; i++) {
       if (rows[i].status == "WFH") {
-        home += `${rows[i].name} ramane acasa\n`;
+        home += `${rows[i].name}\n`;
       } else {
-        office += `${rows[i].name} vine la birou la ${rows[i].arrivesat}\n`;
+        office += `${rows[i].name} la ${rows[i].arrivesat}\n`;
       }
     }
+
+    const currentDateISO = new Date().toISOString().slice(0, 10);
     for (let i = 0; i < rows.length; i++) {
+      const reportMessage = `*Raport pentru ${currentDateISO}*
+--------------     
+La birou vine:
+${office}
+--------------
+Acasa raman:
+${home}
+`;
       let data = JSON.stringify({
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -116,7 +126,7 @@ export class MessageService {
         type: "text",
         text: {
           preview_url: false,
-          body: home + "\n" + office,
+          body: reportMessage,
         },
       });
 
