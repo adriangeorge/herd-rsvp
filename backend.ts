@@ -1,40 +1,43 @@
-import { GenezioDeploy, GenezioMethod } from "@genezio/types";
+import {
+  GenezioDeploy,
+  GenezioMethod,
+  GenezioHttpRequest,
+  GenezioHttpResponse,
+} from "@genezio/types";
 import fetch from "node-fetch";
-
-type SuccessResponse = {
-  status: "success";
-  country: string;
-  lat: number;
-  lon: number;
-  city: string;
-};
-
-type ErrorResponse = {
-  status: "fail";
-};
+import { MessageService } from "./services/messageService";
 
 @GenezioDeploy()
 export class BackendService {
-  constructor() {}
-
-  @GenezioMethod()
-  async hello(name: string) {
-    const ipLocation: SuccessResponse | ErrorResponse = await fetch(
-      "http://ip-api.com/json/"
-    )
-      .then((res) => res.json() as Promise<SuccessResponse>)
-      .catch(() => ({ status: "fail" }));
-
-    if (ipLocation.status === "fail") {
-      return `Hello ${name}! Failed to get the server location :(`;
+  messageService: MessageService;
+  constructor() {
+    this.messageService = new MessageService();
+  }
+  @GenezioMethod({ type: "http" })
+  async handleSimplePlainRequest(
+    request: GenezioHttpRequest
+  ): Promise<GenezioHttpResponse> {
+    if (request.headers.method == "GET") {
+      const res = await this.messageService.verifyToken(
+        request.body.hub.mode,
+        request.body.hub.verify_token,
+        request.body.hub.challenge
+      );
+      if (res.statusCode == "200") {
+        return {
+          body: request.body.hub.challenge,
+          headers: { "content-type": "application/json" },
+          statusCode: "200",
+        };
+      }
     }
 
-    const formattedTime = new Date().toLocaleString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    const response: GenezioHttpResponse = {
+      body: request.body,
+      headers: { "content-type": "text/html" },
+      statusCode: "403",
+    };
 
-    return `Hello ${name}! This response was served from ${ipLocation.city}, ${ipLocation.country} (${ipLocation.lat}, ${ipLocation.lon}) at ${formattedTime}`;
+    return response;
   }
 }

@@ -1,4 +1,4 @@
-name: genezio-project
+name: herd-rsvp
 region: us-east-1
 language: ts
 cloudProvider: genezio
