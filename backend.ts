@@ -9,23 +9,26 @@ import { MessageService } from "./services/messageService";
 
 @GenezioDeploy()
 export class BackendService {
-  messageService: MessageService;
-  constructor() {
-    this.messageService = new MessageService();
-  }
+  constructor() {}
   @GenezioMethod({ type: "http" })
   async handleSimplePlainRequest(
     request: GenezioHttpRequest
   ): Promise<GenezioHttpResponse> {
-    if (request.headers.method == "GET") {
-      const res = await this.messageService.verifyToken(
-        request.body.hub.mode,
-        request.body.hub.verify_token,
-        request.body.hub.challenge
+    const messageService = new MessageService();
+    console.log(JSON.stringify(request));
+    if (request.http.method == "GET") {
+      console.log(JSON.stringify(request));
+      console.log(request.queryStringParameters!["hub.mode"]);
+      console.log(request.queryStringParameters!["hub.verify_token"]);
+      console.log(request.queryStringParameters!["hub.challenge"]);
+      const res = await messageService.verifyToken(
+        request.queryStringParameters!["hub.mode"],
+        request.queryStringParameters!["hub.verify_token"],
+        request.queryStringParameters!["hub.challenge"]
       );
       if (res.statusCode == "200") {
         return {
-          body: request.body.hub.challenge,
+          body: request.queryStringParameters!["hub.challenge"],
           headers: { "content-type": "application/json" },
           statusCode: "200",
         };
@@ -39,5 +42,11 @@ export class BackendService {
     };
 
     return response;
+  }
+
+  @GenezioMethod({ type: "cron", cronString: "* * * * *" })
+  async sendMessageEveryday() {
+    const messageService = new MessageService();
+    await messageService.sendPoll();
   }
 }
