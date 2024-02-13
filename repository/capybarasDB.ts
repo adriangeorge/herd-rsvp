@@ -31,23 +31,23 @@ export class CapybaraDBService {
   }
 
   async setCapybaraStatus(
-    name: string,
+    phone: string,
     status: "WFH" | "OFFICE"
   ): Promise<string> {
     await this.pool.query(
       "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt VARCHAR(255));"
     );
 
-    await this.pool.query("UPDATE capybaras SET status = $1 WHERE name = $2", [
+    await this.pool.query("UPDATE capybaras SET status = $1 WHERE nrtel = $2", [
       status,
-      name,
+      phone,
     ]);
     const result = await this.pool.query("select * from capybaras");
 
     return JSON.stringify(result.rows);
   }
 
-  async setCapybaraArrival(name: string, arrivesAt: number): Promise<string> {
+  async setCapybaraArrival(name: string, arrivesAt: string): Promise<string> {
     await this.pool.query(
       "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt VARCHAR(255));"
     );
@@ -71,6 +71,19 @@ export class CapybaraDBService {
     console.log(result.rows);
     console.log(JSON.stringify(result.rows));
     console.log(JSON.parse(JSON.stringify(result.rows)));
+    return JSON.parse(JSON.stringify(result.rows));
+  }
+
+  async getCapybaraByPhone(phone: string): Promise<CapybaraModel> {
+    await this.pool.query(
+      "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt VARCHAR(255));"
+    );
+
+    const result = await this.pool.query(
+      "select * from capybaras where nrtel = $1",
+      [phone]
+    );
+
     return JSON.parse(JSON.stringify(result.rows));
   }
 }
