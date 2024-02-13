@@ -6,7 +6,7 @@ export type CapybaraModel = {
   name: string;
   nrtel: string;
   status: string;
-  arrivesAt: string;
+  arrivesat: string;
 };
 @GenezioDeploy()
 export class CapybaraDBService {
