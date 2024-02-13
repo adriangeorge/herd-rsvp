@@ -54,4 +54,14 @@ export class CapybaraDBService {
 
     return JSON.stringify(result.rows);
   }
+
+  async getCapybaras(): Promise<string> {
+    await this.pool.query(
+      "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt NUMERIC);"
+    );
+
+    const result = await this.pool.query("select * from capybaras");
+
+    return JSON.stringify(result.rows);
+  }
 }
