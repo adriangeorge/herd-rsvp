@@ -1,8 +1,8 @@
-name: herd-rsvp
+name: genezio-project
 region: us-east-1
+language: ts
 cloudProvider: genezio
 scripts:
-  preBackendDeploy: go mod download
-classes:
-  - path: ./backendService/backendService.go
-    type: jsonrpc
+  preBackendDeploy: npm install
+  preStartLocal: npm install
+packageManager: npm
