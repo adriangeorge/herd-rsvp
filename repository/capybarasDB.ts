@@ -2,6 +2,12 @@ import { GenezioDeploy } from "@genezio/types";
 import pg from "pg";
 const { Pool } = pg;
 
+export interface CapybaraModel {
+  name: string;
+  nrtel: string;
+  status: string;
+  arrivesAt: number;
+}
 @GenezioDeploy()
 export class CapybaraDBService {
   pool = new Pool({
@@ -55,13 +61,16 @@ export class CapybaraDBService {
     return JSON.stringify(result.rows);
   }
 
-  async getCapybaras(): Promise<string> {
+  async getCapybaras(): Promise<CapybaraModel[]> {
     await this.pool.query(
       "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt NUMERIC);"
     );
 
     const result = await this.pool.query("select * from capybaras");
 
-    return JSON.stringify(result.rows);
+    console.log(result.rows);
+    console.log(JSON.stringify(result.rows));
+    console.log(JSON.parse(JSON.stringify(result.rows)));
+    return JSON.parse(JSON.stringify(result.rows));
   }
 }
