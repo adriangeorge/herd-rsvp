@@ -95,4 +95,14 @@ export class CapybaraDBService {
     await this.pool.query("DROP TABLE capybaras");
     return "Capybaras nuked";
   }
+
+  async newWorkDay(): Promise<string> {
+    await this.pool.query(
+      "CREATE TABLE IF NOT EXISTS capybaras (id serial PRIMARY KEY,name VARCHAR(255), nrtel VARCHAR(255), status VARCHAR(255), arrivesAt VARCHAR(255));"
+    );
+
+    await this.pool.query("UPDATE capybaras SET arrivesAt = $1", ["0"]);
+    await this.pool.query("UPDATE capybaras SET status = $1", ["WFH"]);
+    return "New work day";
+  }
 }
